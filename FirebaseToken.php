@@ -71,7 +71,7 @@ class FirebaseTokenGenerator
      *
      * @return  void
      */
-    private static function handleJsonError($errno)
+    private static function handleJSONError($errno)
     {
         $messages = array(
             JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
