@@ -2,7 +2,7 @@ Firebase Token Generator for PHP
 ================================
 This library lets you easily generate
 [authentication tokens](https://www.firebase.com/docs/security/authentication.html)
-for accessing your Firebase securely.
+for accessing your Firebase securely. Depends on [PHP-JWT](https://github.com/firebase/php-jwt).
 
 Example
 -------
