@@ -16,7 +16,7 @@ Example
 
   // Get data only readable by auth.id = "example".
   $uri = "https://example.firebaseio.com/.json?auth=".$token;
-  var_dump(file_get_content($uri));
+  var_dump(file_get_contents($uri));
 ?>
 ```
 
