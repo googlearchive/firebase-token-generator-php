@@ -2,7 +2,7 @@
 
 include_once 'JWT.php';
 
-class FirebaseTokenGenerator
+class Services_FirebaseTokenGenerator
 {
     private $version = 0;
 
