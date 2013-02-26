@@ -11,7 +11,7 @@ Example
   include_once "FirebaseToken.php";
 
   $secret = "0014ae3b1ded44de9d9f6fc60dfd1c64";
-  $tokenGen = new FirebaseTokenGenerator($secret);
+  $tokenGen = new Services_FirebaseTokenGenerator($secret);
   $token = $tokenGen->createToken(array("id" => "example"));
 
   // Get data only readable by auth.id = "example".
