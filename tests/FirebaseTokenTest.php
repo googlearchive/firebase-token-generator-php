@@ -17,7 +17,7 @@ class FirebaseTokenTest extends PHPUnit_Framework_TestCase {
   function testAdminDebug() {
     $key = "foobar";
     $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $token = $tokenGen->createToken(null, true, true);
+    $token = $tokenGen->createToken(null, array("admin" => true, "debug" => true));
     
     $data = JWT::decode($token, $key);
     $this->assertTrue($data->admin);
@@ -27,6 +27,26 @@ class FirebaseTokenTest extends PHPUnit_Framework_TestCase {
   function testMalformedKeyThrowsException() {
     $this->setExpectedException("UnexpectedValueException");
     $tokenGen = new Services_FirebaseTokenGenerator(1234567890);
+  }
+
+  function testExpires() {
+    $key = "barfoo";
+    $tokenGen = new Services_FirebaseTokenGenerator($key);
+    $expires = time() + 1000;
+    $token = $tokenGen->createToken(null, array("expires" => $expires));
+    
+    $data = JWT::decode($token, $key);
+    $this->assertEquals($expires, $data->exp);
+  }
+
+  function testNotBeforeObject() {
+    $key = "barfoo";
+    $tokenGen = new Services_FirebaseTokenGenerator($key);
+    $notBefore = new DateTime("now", new DateTimeZone('America/Los_Angeles'));
+    $token = $tokenGen->createToken(null, array("notBefore" => $notBefore));
+    
+    $data = JWT::decode($token, $key);
+    $this->assertEquals($notBefore->getTimestamp(), $data->nbf);
   }
 }
 
