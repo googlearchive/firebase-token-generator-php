@@ -8,7 +8,7 @@ class Services_FirebaseTokenGenerator
 
     /**
      * Example usage:
-     *     $tokenGen = new FirebaseTokenGenerator("0014ae3b1ded44de9d9f6fc60dfd1c64");
+     *     $tokenGen = new Services_FirebaseTokenGenerator("0014ae3b1ded44de9d9f6fc60dfd1c64");
      *     $tokenGen->createToken(array("id" => "foo", "bar" => "baz"));
      *
      * @access  public
