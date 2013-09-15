@@ -56,12 +56,16 @@ class Services_FirebaseTokenGenerator
      */
     public function createToken($data, $options = null)
     {
+        $funcName = 'Services_FirebaseTokenGenerator->createToken'; 
+
         // If $data is JSONifiable, let it pass.
         $json = json_encode($data);
         if (function_exists("json_last_error") && $errno = json_last_error()) {
             $this->handleJSONError($errno);
         } else if ($json === "null" && $data !== null) {
             throw new UnexpectedValueException("Data is not valid JSON");
+        } else if (empty($data) && empty($options)) {
+            throw new Exception($funcName + ": data is empty and no options are set.  This token will have no effect on Firebase.");
         }
 
         $claims = array();
