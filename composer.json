@@ -1,0 +1,7 @@
+{
+    "name": "firebase/firebase-token-generator-php",
+    "require": {
+        "php": ">=5.3.0",
+        "firebase/php-jwt": "dev-master"
+    }
+}
