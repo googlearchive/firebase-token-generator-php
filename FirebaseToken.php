@@ -1,6 +1,6 @@
 <?php
 
-include_once 'JWT.php';
+include_once 'vendor/firebase/php-jwt/Firebase/PHP-JWT/Authentication/JWT.php';
 
 class Services_FirebaseTokenGenerator
 {
