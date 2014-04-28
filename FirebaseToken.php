@@ -1,6 +1,6 @@
 <?php
 
-use JWT;
+include_once (dirname(__FILE__) . '../../firebase/php-jwt/Firebase/PHP-JWT/Authentication/JWT.php');
 
 class Services_FirebaseTokenGenerator
 {
