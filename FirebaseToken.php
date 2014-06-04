@@ -1,6 +1,17 @@
 <?php
 
-include_once 'JWT.php';
+$jwt_filename = dirname(__FILE__) . 'JWT.php';
+
+if (!file_exists($jwt_filename)) {
+    // try Composer autoload
+    $autoload = dirname(__FILE__) . '/vendor/autoload.php'
+
+    if (file_exists($autoload)) {
+        $jwt_filename = $autoload;
+    }
+}
+
+include_once $jwt_filename;
 
 class Services_FirebaseTokenGenerator
 {
@@ -50,13 +61,13 @@ class Services_FirebaseTokenGenerator
      *                                   since epoch) or a DateTime object that
      *                                   specifies the time before which the
      *                                   should be rejected by the server.
-     *                                   
+     *
      *
      * @return  string       A Firebase auth token.
      */
     public function createToken($data, $options = null)
     {
-        $funcName = 'Services_FirebaseTokenGenerator->createToken'; 
+        $funcName = 'Services_FirebaseTokenGenerator->createToken';
 
         // If $data is JSONifiable, let it pass.
         $json = json_encode($data);
