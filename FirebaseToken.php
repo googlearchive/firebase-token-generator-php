@@ -50,13 +50,13 @@ class Services_FirebaseTokenGenerator
      *                                   since epoch) or a DateTime object that
      *                                   specifies the time before which the
      *                                   should be rejected by the server.
-     *                                   
+     *
      *
      * @return  string       A Firebase auth token.
      */
     public function createToken($data, $options = null)
     {
-        $funcName = 'Services_FirebaseTokenGenerator->createToken'; 
+        $funcName = 'Services_FirebaseTokenGenerator->createToken';
 
         // If $data is JSONifiable, let it pass.
         $json = json_encode($data);
@@ -144,8 +144,8 @@ class Services_FirebaseTokenGenerator
             JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON'
         );
         throw new UnexpectedValueException(isset($messages[$errno])
-            ? $messages[$errno]
-            : 'Unknown JSON error: ' . $errno
+                ? $messages[$errno]
+                : 'Unknown JSON error: ' . $errno
         );
     }
 }
