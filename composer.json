@@ -1,0 +1,24 @@
+{
+    "name": "firebase/token-generator",
+    "description": "A simple library to generate JWT tokens for authenticating to a Firebase.",
+    "homepage": "https://github.com/firebase/firebase-token-generator-php",
+    "authors": [
+        {
+            "name": "Anant Narayanan",
+            "email": "anant@php.net",
+            "role": "Developer"
+        },
+        {
+            "name": "Chris Raynor",
+            "email": "chris@firebase.com",
+            "role": "Developer"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.2.0",
+        "firebase/php-jwt": "dev-master"
+    },
+    "target-dir": "Firebase/token-generator",
+    "minimum-stability": "dev"
+}
