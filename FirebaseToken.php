@@ -4,7 +4,7 @@ $jwt_filename = dirname(__FILE__) . 'JWT.php';
 
 if (!file_exists($jwt_filename)) {
     // try Composer autoload
-    $autoload = dirname(__FILE__) . '/vendor/autoload.php'
+    $autoload = dirname(__FILE__) . '/vendor/autoload.php';
 
     if (file_exists($autoload)) {
         $jwt_filename = $autoload;
