@@ -19,6 +19,9 @@
         "php": ">=5.2.0",
         "firebase/php-jwt": "dev-master"
     },
+    "autoload": {
+        "classmap": ["FirebaseToken.php"]
+    },
     "target-dir": "Firebase/token-generator",
     "minimum-stability": "dev"
 }
