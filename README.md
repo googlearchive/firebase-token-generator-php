@@ -47,11 +47,11 @@ Firebase rules.
 A second `options` argument can be passed to `createToken()` to modify how Firebase treats the
 token. Available options are:
 
-* **expires** (number) - A timestamp (as number of seconds since the epoch) denoting the time
-after which this token should no longer be valid.
+* **expires** (number or DateTime) - A timestamp (as number of seconds since the epoch) or a `DateTime`
+denoting the time after which this token should no longer be valid.
 
-* **notBefore** (number) - A timestamp (as number of seconds since the epoch) denoting the time
-before which this token should be rejected by the server.
+* **notBefore** (number or DateTime) - A timestamp (as number of seconds since the epoch) or a `DateTime`
+denoting the time before which this token should be rejected by the server.
 
 * **admin** (boolean) - Set to `True` if you want to disable all security rules for this client.
 This will provide the client with read and write access to your entire Firebase.
