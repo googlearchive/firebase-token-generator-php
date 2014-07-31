@@ -31,7 +31,7 @@ generate a token with this snippet of PHP code:
 <?php
   include_once "FirebaseToken.php";
 
-  $secret = "0014ae3b1ded44de9d9f6fc60dfd1c64";
+  $secret = "<YOUR_FIREBASE_SECRET>";
   $tokenGen = new Services_FirebaseTokenGenerator($secret);
   $token = $tokenGen->createToken(array("id" => "exampleID"));
 ?>
@@ -69,7 +69,7 @@ Here is an example of how to use the second `options` argument:
 <?php
   include_once "FirebaseToken.php";
 
-  $secret = "0014ae3b1ded44de9d9f6fc60dfd1c64";
+  $secret = "<YOUR_FIREBASE_SECRET>";
   $tokenGen = new Services_FirebaseTokenGenerator($secret);
   $token = $tokenGen->createToken(array("id" => "exampleID"), array("admin" => True));
 ?>
