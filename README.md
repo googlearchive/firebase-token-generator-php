@@ -6,15 +6,18 @@ with secure JSON Web Tokens (JWTs). The auth payload stored in those tokens is a
 for use in your Firebase [security rules](https://www.firebase.com/docs/security/api/rule/).
 This is a token generator library for PHP which allows you to easily create those JWTs.
 
+
 ## Dependencies
 
 The Firebase PHP token generator library depends on [PHP-JWT](https://github.com/firebase/php-jwt).
+
 
 ## A Note About Security
 
 **IMPORTANT:** Because token generation requires your Firebase Secret, you should only generate
 tokens on *trusted servers*. Never embed your Firebase Secret directly into your application and
 never share your Firebase Secret with a connected client.
+
 
 ## Generating Tokens
 
@@ -38,6 +41,7 @@ The arbitrary JSON object passed into `createToken()` is then available for use 
 security rules via the [`auth` variable](https://www.firebase.com/docs/security/api/rule/auth.html).
 This is how you pass trusted authentication details (e.g. the client's user ID) into your
 Firebase rules.
+
 
 ## Token Options
 
