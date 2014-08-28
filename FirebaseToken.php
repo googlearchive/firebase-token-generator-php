@@ -82,11 +82,17 @@ class Services_FirebaseTokenGenerator
             $claims = $this->_processOptions($options);
         }
 
+        $this->_validateData($funcName, $data, ($claims["admin"] == true));
+
         $claims["d"] = $data;
         $claims["v"] = $this->version;
         $claims["iat"] = time();
 
-        return JWT::encode($claims, $this->secret, "HS256");
+        $token = JWT::encode($claims, $this->secret, "HS256");
+        if (strlen($token) > 1024) {
+            throw new Exception($funcName + ": generated token is too large.  Token cannot be larger than 1024 bytes.");
+        }
+        return $token;
     }
 
     /**
@@ -137,6 +143,25 @@ class Services_FirebaseTokenGenerator
             }
         }
         return $claims;
+    }
+
+    /**
+     * Validates provided data object, throwing Exceptions where necessary.
+     *
+     * @param string $funcName the function name string for error message reporting.
+     * @param array $data the token data to be validated.
+     * @param boolean $isAdminToken whether the admin flag has been set.
+     */
+     private static function _validateData($funcName, $data, $isAdminToken) {
+        if (!is_null($data) && !is_array($data)) {
+            throw new Exception($funcName + ": data must be null or an associative array of token data.");
+        }
+        $containsUID = (is_array($data) && array_key_exists("uid", $data));
+        if ((!$containsUID && !$isAdminToken) || ($containsUID && !is_string($data["uid"]))) {
+            throw new Exception($funcName + ": data must contain a \"uid\" key that must be a string.");
+        } else if ($containsUID && (strlen($data["uid"]) > 256)) {
+            throw new Exception($funcName + ": data must contain a \"uid\" key that must not be longer than 256 bytes.");
+        }
     }
 
     /**
