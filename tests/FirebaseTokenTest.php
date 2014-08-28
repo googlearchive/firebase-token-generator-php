@@ -99,21 +99,21 @@ class FirebaseTokenTest extends PHPUnit_Framework_TestCase {
     $token = $tokenGen->createToken(array("foo" => "bar"), array("admin" => true));
   }
 
-  function testInvalideUIDWithAdmin1() {
+  function testInvalidUIDWithAdmin1() {
     $key = "barfoo";
     $tokenGen = new Services_FirebaseTokenGenerator($key);
     $this->setExpectedException("Exception");
     $token = $tokenGen->createToken(array("uid" => 1), array("admin" => true));
   }
 
-  function testInvalideUIDWithAdmin2() {
+  function testInvalidUIDWithAdmin2() {
     $key = "barfoo";
     $tokenGen = new Services_FirebaseTokenGenerator($key);
     $this->setExpectedException("Exception");
     $token = $tokenGen->createToken(array("uid" => null), array("admin" => true));
   }
 
-  function testInvalideUIDWithAdmin3() {
+  function testInvalidUIDWithAdmin3() {
     $key = "barfoo";
     $tokenGen = new Services_FirebaseTokenGenerator($key);
     $this->setExpectedException("Exception");
