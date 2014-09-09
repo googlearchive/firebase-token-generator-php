@@ -36,11 +36,13 @@ this snippet of PHP code:
 ?>
 ```
 
-The payload object passed into `createToken()` is then available for use within your
+The payload passed to `createToken()` is made available for use within your
 security rules via the [`auth` variable](https://www.firebase.com/docs/security/api/rule/auth.html).
-This is how you pass trusted authentication details (e.g. the client's user ID) into your
-Firebase rules. It must contain a "uid" key, which must be a string of less than 256 bytes long,
-and the generated token must be less than 1024 bytes long in total.
+This is how you pass trusted authentication details (e.g. the client's user ID)
+to your Firebase security rules. The payload can contain any data of your
+choosing, however it must contain a "uid" key, which must be a string of less
+than 256 characters. The generated token must be less than 1024 characters in
+total.
 
 
 ## Token Options
