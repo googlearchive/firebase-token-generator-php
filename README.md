@@ -32,14 +32,17 @@ this snippet of PHP code:
   include_once "FirebaseToken.php";
 
   $tokenGen = new Services_FirebaseTokenGenerator("<YOUR_FIREBASE_SECRET>");
-  $token = $tokenGen->createToken(array("id" => "exampleID"));
+  $token = $tokenGen->createToken(array("uid" => "exampleID"));
 ?>
 ```
 
-The arbitrary payload object passed into `createToken()` is then available for use within your
+The payload passed to `createToken()` is made available for use within your
 security rules via the [`auth` variable](https://www.firebase.com/docs/security/api/rule/auth.html).
-This is how you pass trusted authentication details (e.g. the client's user ID) into your
-Firebase rules.
+This is how you pass trusted authentication details (e.g. the client's user ID)
+to your Firebase security rules. The payload can contain any data of your
+choosing, however it must contain a "uid" key, which must be a string of less
+than 256 characters. The generated token must be less than 1024 characters in
+total.
 
 
 ## Token Options
@@ -67,6 +70,6 @@ Here is an example of how to use the second `options` argument:
   include_once "FirebaseToken.php";
 
   $tokenGen = new Services_FirebaseTokenGenerator("<YOUR_FIREBASE_SECRET>");
-  $token = $tokenGen->createToken(array("id" => "exampleID"), array("admin" => True));
+  $token = $tokenGen->createToken(array("uid" => "exampleID"), array("admin" => True));
 ?>
 ```
