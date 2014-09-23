@@ -77,7 +77,7 @@ class Services_FirebaseTokenGenerator
             throw new Exception($funcName + ": data is empty and no options are set.  This token will have no effect on Firebase.");
         }
 
-        $claims = array();
+        $claims = array("admin" => false);
         if (is_array($options)) {
             $claims = $this->_processOptions($options);
         }
