@@ -82,7 +82,7 @@ class Services_FirebaseTokenGenerator
             $claims = $this->_processOptions($options);
         }
 
-        $this->_validateData($funcName, $data, ((isset($claims['admin'])) && ($claims["admin"] == true)));
+        $this->_validateData($funcName, $data, (isset($claims['admin']) && ($claims["admin"] == true)));
 
         $claims["d"] = $data;
         $claims["v"] = $this->version;
