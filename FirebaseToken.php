@@ -183,5 +183,3 @@ class Services_FirebaseTokenGenerator
         );
     }
 }
-
-?>
