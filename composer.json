@@ -17,7 +17,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.2.0",
-        "firebase/php-jwt": "2.0.0"
+        "firebase/php-jwt": "~2.0"
     },
     "autoload": {
         "classmap": ["FirebaseToken.php"]
