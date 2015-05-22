@@ -57,7 +57,7 @@ denoting the time after which this token should no longer be valid.
 denoting the time before which this token should be rejected by the server.
 
 * **admin** (boolean) - Set to `True` if you want to disable all security rules for this client.
-This will provide the client with read and write access to your entire Firebase.
+This will provide the client with read and write access to your entire Firebase database.
 
 * **debug** (boolean) - Set to `True` to enable debug output from your security rules. You should
 generally *not* leave this set to `True` in production (as it slows down the rules implementation
