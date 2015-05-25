@@ -119,6 +119,13 @@ class FirebaseTokenTest extends PHPUnit_Framework_TestCase {
     $this->setExpectedException("Exception");
     $token = $tokenGen->createToken("foo", array("admin" => true));
   }
+
+  function testEmptyDataAndNoOptionsThrowsException() {
+    $key = "barfoo";
+    $tokenGen = new Services_FirebaseTokenGenerator($key);
+    $this->setExpectedException("Exception", "Services_FirebaseTokenGenerator->createToken: data is empty and no options are set.  This token will have no effect on Firebase.");
+    $tokenGen->createToken(null);
+  }
 }
 
 ?>
