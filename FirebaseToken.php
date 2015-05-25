@@ -74,7 +74,7 @@ class Services_FirebaseTokenGenerator
         } else if ($json === "null" && $data !== null) {
             throw new UnexpectedValueException("Data is not valid JSON");
         } else if (empty($data) && empty($options)) {
-            throw new Exception($funcName + ": data is empty and no options are set.  This token will have no effect on Firebase.");
+            throw new Exception($funcName . ": data is empty and no options are set.  This token will have no effect on Firebase.");
         }
 
         $claims = array();
@@ -90,7 +90,7 @@ class Services_FirebaseTokenGenerator
 
         $token = JWT::encode($claims, $this->secret, "HS256");
         if (strlen($token) > 1024) {
-            throw new Exception($funcName + ": generated token is too large.  Token cannot be larger than 1024 bytes.");
+            throw new Exception($funcName . ": generated token is too large.  Token cannot be larger than 1024 bytes.");
         }
         return $token;
     }
@@ -127,19 +127,19 @@ class Services_FirebaseTokenGenerator
                                 $claims[$code] = $value->getTimestamp();
                             } else {
                                 throw new UnexpectedValueException(
-                                    "Provided " + $key +
+                                    "Provided " . $key .
                                     " option is not a DateTime object");
                             }
                             break;
                         default:
                             throw new UnexpectedValueException(
-                                "Provided " + $key +
-                                " option is invalid " + $value);
+                                "Provided " . $key .
+                                " option is invalid " . $value);
                     }
                     break;
                 default:
                     throw new UnexpectedValueException(
-                        "Invalid key " + $key + " provided in options");
+                        "Invalid key " . $key . " provided in options");
             }
         }
         return $claims;
@@ -154,13 +154,13 @@ class Services_FirebaseTokenGenerator
      */
      private static function _validateData($funcName, $data, $isAdminToken) {
         if (!is_null($data) && !is_array($data)) {
-            throw new Exception($funcName + ": data must be null or an associative array of token data.");
+            throw new Exception($funcName . ": data must be null or an associative array of token data.");
         }
         $containsUID = (is_array($data) && array_key_exists("uid", $data));
         if ((!$containsUID && !$isAdminToken) || ($containsUID && !is_string($data["uid"]))) {
-            throw new Exception($funcName + ": data must contain a \"uid\" key that must be a string.");
+            throw new Exception($funcName . ": data must contain a \"uid\" key that must be a string.");
         } else if ($containsUID && (strlen($data["uid"]) > 256)) {
-            throw new Exception($funcName + ": data must contain a \"uid\" key that must not be longer than 256 bytes.");
+            throw new Exception($funcName . ": data must contain a \"uid\" key that must not be longer than 256 bytes.");
         }
     }
 
