@@ -220,11 +220,11 @@ class TokenGenerator
      */
     private function validate()
     {
-        if (false === $this->options['admin']) {
-            if (!array_key_exists('uid', $this->data)) {
-                throw new TokenException('No uid provided in data and admin option not set.');
-            }
+        if (false === $this->options['admin'] && !array_key_exists('uid', $this->data)) {
+            throw new TokenException('No uid provided in data and admin option not set.');
+        }
 
+        if (array_key_exists('uid', $this->data)) {
             $this->validateUid($this->data['uid']);
         }
     }
