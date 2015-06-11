@@ -7,7 +7,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Firebase\Token\Test;
+namespace Firebase\Token\Tests;
 
 use Firebase\Token\TokenGenerator;
 
