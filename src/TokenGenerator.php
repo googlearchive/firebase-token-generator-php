@@ -43,12 +43,11 @@ class TokenGenerator
     {
         if (!is_string($secret)) {
             throw new TokenException(
-                sprintf('The Firebase secret must be a string, %s given', gettype($secret))
+                sprintf('The Firebase secret must be a string, %s given.', gettype($secret))
             );
         }
 
         $this->secret  = $secret;
-        $this->version = 0;
         $this->data    = [];
 
         // Default options
@@ -233,19 +232,19 @@ class TokenGenerator
     private function validateUid($uid)
     {
         if (!is_string($uid)) {
-            throw new TokenException(sprintf('The uid must be a string, %s given', gettype($uid)));
+            throw new TokenException(sprintf('The uid must be a string, %s given.', gettype($uid)));
         }
 
         $uidSize = mb_strlen($uid, '8bit');
 
         if ($uidSize > static::MAX_UID_SIZE) {
             throw new TokenException(
-                sprintf('The provided uid is longer than %d bytes (%d)', static::MAX_UID_SIZE, $uidSize)
+                sprintf('The provided uid is longer than %d bytes (%d).', static::MAX_UID_SIZE, $uidSize)
             );
         }
 
         if (0 === $uidSize) {
-            throw new TokenException('The provided uid is empty');
+            throw new TokenException('The provided uid is empty.');
         }
     }
 }

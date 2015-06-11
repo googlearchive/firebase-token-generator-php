@@ -97,7 +97,7 @@ class TokenGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Firebase\Token\TokenException
-     * @expectedExceptionMessage The Firebase secret must be a string, integer given
+     * @expectedExceptionMessage The Firebase secret must be a string, integer given.
      */
     public function testTriggerExceptionOnInvalidSecret()
     {
@@ -115,7 +115,7 @@ class TokenGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Firebase\Token\TokenException
-     * @expectedExceptionMessage The uid must be a string, integer given
+     * @expectedExceptionMessage The uid must be a string, integer given.
      */
     public function testTriggerExceptionOnNonStringUid()
     {
@@ -137,7 +137,7 @@ class TokenGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Firebase\Token\TokenException
-     * @expectedExceptionMessage The provided uid is empty
+     * @expectedExceptionMessage The provided uid is empty.
      */
     public function testTriggerExceptionIfUidIsEmpty()
     {
