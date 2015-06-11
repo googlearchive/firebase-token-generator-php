@@ -54,8 +54,8 @@ class TokenGenerator
             );
         }
 
-        $this->secret  = $secret;
-        $this->data    = [];
+        $this->secret = $secret;
+        $this->data   = [];
 
         // Default options
         $this->options = [
