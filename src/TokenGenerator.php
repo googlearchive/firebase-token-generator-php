@@ -160,7 +160,7 @@ class TokenGenerator
         $claims        = $this->processOptions();
         $claims['d']   = $this->data;
         $claims['v']   = 0;
-        $claims['ait'] = time();
+        $claims['iat'] = time();
 
         try {
             $token = \JWT::encode($claims, $this->secret, 'HS256');
