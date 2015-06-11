@@ -33,6 +33,13 @@ class TokenGenerator
     private $options;
 
     /**
+     * The Firebase secret.
+     *
+     * @var string
+     */
+    private $secret;
+
+    /**
      * Initializes the generator.
      *
      * @param string $secret The Firebase secret.
