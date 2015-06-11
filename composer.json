@@ -25,7 +25,8 @@
     "autoload": {
         "psr-4": {
             "Firebase\\Token\\": "src"
-        }
+        },
+        "files": ["FirebaseToken.php"]
     },
     "autoload-dev": {
         "psr-4": {
