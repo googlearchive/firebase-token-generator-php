@@ -18,6 +18,13 @@ The Firebase PHP token generator library depends on [PHP-JWT](https://github.com
 tokens on *trusted servers*. Never embed your Firebase Secret directly into your application and
 never share your Firebase Secret with a connected client.
 
+## Installation
+
+Using composer:
+
+```
+composer require firebase/token-generator
+```
 
 ## Generating Tokens
 
@@ -28,15 +35,22 @@ Once you've downloaded the library and grabbed your Firebase Secret, you can gen
 this snippet of PHP code:
 
 ```php
-<?php
-  include_once "FirebaseToken.php";
+use Firebase\Token\TokenException;
+use Firebase\Token\TokenGenerator;
 
-  $tokenGen = new Services_FirebaseTokenGenerator("<YOUR_FIREBASE_SECRET>");
-  $token = $tokenGen->createToken(array("uid" => "exampleID"));
-?>
+try {
+    $generator = new TokenGenerator('<YOUR_FIREBASE_SECRET>');
+    $token = $generator
+        ->setData(array('uid' => 'exampleID'))
+        ->create();
+} catch (TokenException $e) {
+    echo "Error: ".$e->getMessage();
+}
+
+echo $token;
 ```
 
-The payload passed to `createToken()` is made available for use within your
+The payload passed to `setData()` is made available for use within your
 security rules via the [`auth` variable](https://www.firebase.com/docs/security/api/rule/auth.html).
 This is how you pass trusted authentication details (e.g. the client's user ID)
 to your Firebase security rules. The payload can contain any data of your
@@ -47,8 +61,7 @@ total.
 
 ## Token Options
 
-A second `options` argument can be passed to `createToken()` to modify how Firebase treats the
-token. Available options are:
+Token options can be set to modify how Firebase treats the token. Available options are:
 
 * **expires** (number or DateTime) - A timestamp (as number of seconds since the epoch) or a `DateTime`
 denoting the time after which this token should no longer be valid.
@@ -63,13 +76,26 @@ This will provide the client with read and write access to your entire Firebase 
 generally *not* leave this set to `True` in production (as it slows down the rules implementation
 and gives your users visibility into your rules), but it can be helpful for debugging.
 
-Here is an example of how to use the second `options` argument:
+Here is an example of how to set options:
 
 ```php
-<?php
-  include_once "FirebaseToken.php";
+use Firebase\Token\TokenGenerator;
+    
+$generator = new TokenGenerator('<YOUR_FIREBASE_SECRET>');
 
-  $tokenGen = new Services_FirebaseTokenGenerator("<YOUR_FIREBASE_SECRET>");
-  $token = $tokenGen->createToken(array("uid" => "exampleID"), array("admin" => True));
-?>
+// Using setOption()
+$token = $generator
+    ->setOption('admin', true)
+    ->setOption('debug', true)
+    ->setData(array('uid' => 'exampleID'))
+    ->create();
+
+// Using setOptions() 
+$token = $generator
+    ->setOptions(array(
+        'admin' => true,
+        'debug' => true
+    ))
+    ->setData(array('uid' => 'exampleID'))
+    ->create();
 ```

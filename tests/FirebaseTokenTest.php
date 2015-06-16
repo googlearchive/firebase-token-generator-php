@@ -1,138 +1,212 @@
 <?php
 
-include_once "FirebaseToken.php";
+/*
+ * This file is part of the Firebase Token Generator.
+ *
+ * This source file is subject to the license that is bundled
+ * with this source code in the file LICENSE.
+ */
 
-class FirebaseTokenTest extends PHPUnit_Framework_TestCase {
-  function testCreate() {
-    $key = "0014ae3b1ded44de9d9f6fc60dfd1c64";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $token = $tokenGen->createToken(array("foo" => "bar", "baz" => "boo", "uid" => "blah"));
+namespace Firebase\Token\Tests;
 
-    $data = JWT::decode($token, $key, array('HS256'));
-    $this->assertEquals("bar", $data->d->foo);
-    $this->assertEquals("boo", $data->d->baz);
-    $this->assertInternalType("integer", $data->iat);
-  }
+/**
+ * Tests for the Legacy \Services_FirebaseTokenGenerator class.
+ */
+class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @var \Services_FirebaseTokenGenerator
+     */
+    protected $generator;
 
-  function testAdminDebug() {
-    $key = "foobar";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $token = $tokenGen->createToken(null, array("admin" => true, "debug" => true));
+    /**
+     * @var string
+     */
+    protected $secret;
 
-    $data = JWT::decode($token, $key, array('HS256'));
-    $this->assertTrue($data->admin);
-    $this->assertTrue($data->debug);
-  }
+    protected function setUp()
+    {
+        $this->secret    = 'secret';
+        $this->generator = new \Services_FirebaseTokenGenerator($this->secret);
+    }
 
-  function testMalformedKeyThrowsException() {
-    $this->setExpectedException("UnexpectedValueException", 'Invalid secret provided');
-    $tokenGen = new Services_FirebaseTokenGenerator(1234567890);
-  }
+    public function testCreate()
+    {
+        $token = $this->generator->createToken(['foo' => 'bar', 'baz' => 'boo', 'uid' => 'blah']);
 
-  function testExpires() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $expires = time() + 1000;
-    $token = $tokenGen->createToken(array("uid" => "blah"), array("expires" => $expires));
+        $data = $this->decodeToken($token);
 
-    $data = JWT::decode($token, $key, array('HS256'));
-    $this->assertEquals($expires, $data->exp);
-  }
+        $this->assertEquals('bar', $data->d->foo);
+        $this->assertEquals('boo', $data->d->baz);
+        $this->assertInternalType('integer', $data->iat);
+    }
 
-  function testNotBeforeObject() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $notBefore = new DateTime("now", new DateTimeZone('America/Los_Angeles'));
-    $token = $tokenGen->createToken(array("uid" => "blah"), array("notBefore" => $notBefore));
+    public function testAdminDebug()
+    {
+        $token = $this->generator->createToken(null, ['admin' => true, 'debug' => true]);
 
-    $data = JWT::decode($token, $key, array('HS256'));
-    $this->assertEquals($notBefore->getTimestamp(), $data->nbf);
-  }
+        $data = $data = $this->decodeToken($token);
 
-  function testNoUID() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", 'Services_FirebaseTokenGenerator->createToken: data must contain a "uid" key that must be a string.');
-    $token = $tokenGen->createToken(array("blah" => 5));
-  }
+        $this->assertTrue($data->admin);
+        $this->assertTrue($data->debug);
+    }
 
-  function testInvalidUID() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", 'Services_FirebaseTokenGenerator->createToken: data must contain a "uid" key that must be a string.');
-    $token = $tokenGen->createToken(array("uid" => 5, "blah" => 5));
-  }
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage The Firebase secret must be a string, integer given.
+     */
+    public function testMalformedKeyThrowsException()
+    {
+        new \Services_FirebaseTokenGenerator(1234567890);
+    }
 
-  function testUIDMaxLength() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    //length:                                               10        20        30        40        50        60        70        80        90       100       110       120       130       140       150       160       170       180       190       200       210       220       230       240       250   256
-    $token = $tokenGen->createToken(array("uid" => "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456"));
-  }
+    public function testExpires()
+    {
+        $expires = time() + 1000;
 
-  function testUIDTooLong() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", 'Services_FirebaseTokenGenerator->createToken: data must contain a "uid" key that must not be longer than 256 bytes.');
-    //length:                                               10        20        30        40        50        60        70        80        90       100       110       120       130       140       150       160       170       180       190       200       210       220       230       240       250    257
-    $token = $tokenGen->createToken(array("uid" => "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567"));
-  }
+        $token = $this->generator->createToken(['uid' => 'blah'], ['expires' => $expires]);
 
-  function testUIDMinLength() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $token = $tokenGen->createToken(array("uid" => ""));
-  }
+        $data = $data = $this->decodeToken($token);
 
-  function testTokenTooLong() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", "Services_FirebaseTokenGenerator->createToken: generated token is too large.  Token cannot be larger than 1024 bytes.");
-    $token = $tokenGen->createToken(array("uid" => "blah", "longVar" => "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345612345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234561234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456"));
-  }
+        $this->assertEquals($expires, $data->exp);
+    }
 
-  function testNoUIDWithAdmin() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $token = $tokenGen->createToken(null, array("admin" => true));
-    $token = $tokenGen->createToken(array(), array("admin" => true));
-    $token = $tokenGen->createToken(array("foo" => "bar"), array("admin" => true));
-  }
+    public function testNotBeforeObject()
+    {
+        $notBefore = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
 
-  function testInvalidUIDWithAdmin1() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", 'Services_FirebaseTokenGenerator->createToken: data must contain a "uid" key that must be a string.');
-    $token = $tokenGen->createToken(array("uid" => 1), array("admin" => true));
-  }
+        $token = $this->generator->createToken(['uid' => 'blah'], ['notBefore' => $notBefore]);
 
-  function testInvalidUIDWithAdmin2() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", 'Services_FirebaseTokenGenerator->createToken: data must contain a "uid" key that must be a string.');
-    $token = $tokenGen->createToken(array("uid" => null), array("admin" => true));
-  }
+        $data = $data = $this->decodeToken($token);
 
-  function testInvalidUIDWithAdmin3() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", "Services_FirebaseTokenGenerator->createToken: data must be null or an associative array of token data.");
-    $token = $tokenGen->createToken("foo", array("admin" => true));
-  }
+        $this->assertEquals($notBefore->getTimestamp(), $data->nbf);
+    }
 
-  function testEmptyDataAndNoOptionsThrowsException() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("Exception", "Services_FirebaseTokenGenerator->createToken: data is empty and no options are set.  This token will have no effect on Firebase.");
-    $tokenGen->createToken(null);
-  }
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage No uid provided in data and admin option not set.
+     */
+    public function testNoUID()
+    {
+        $this->generator->createToken(['blah' => 5]);
+    }
 
-  function testMalformedDataThrowsException() {
-    $key = "barfoo";
-    $tokenGen = new Services_FirebaseTokenGenerator($key);
-    $this->setExpectedException("UnexpectedValueException", "Malformed UTF-8 characters, possibly incorrectly encoded");
-    $tokenGen->createToken("\xB1\x31");
-  }
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage The uid must be a string, integer given.
+     */
+    public function testInvalidUID()
+    {
+        $this->generator->createToken(['uid' => 5, 'blah' => 5]);
+    }
+
+    public function testUIDTooLong()
+    {
+        $this->setExpectedException(
+            '\Firebase\Token\TokenException',
+            sprintf(
+                'The provided uid is longer than %d bytes (%d)',
+                \Firebase\Token\TokenGenerator::MAX_UID_SIZE, \Firebase\Token\TokenGenerator::MAX_UID_SIZE + 1
+            )
+        );
+
+        $this->generator->createToken(['uid' => str_repeat('x', \Firebase\Token\TokenGenerator::MAX_UID_SIZE + 1)]);
+    }
+
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage The provided uid is empty
+     */
+    public function testUIDMinLength()
+    {
+        $this->generator->createToken(['uid' => '']);
+    }
+
+    public function testTokenTooLong()
+    {
+        $expectedMessagePattern = sprintf(
+            '/^The generated token is larger than %d bytes \(\d+\)$/', \Firebase\Token\TokenGenerator::MAX_TOKEN_SIZE
+        );
+
+        $this->setExpectedExceptionRegExp('\Exception', $expectedMessagePattern);
+
+        $this->generator->createToken([
+            'uid'     => 'uid',
+            'longVar' => str_repeat('x', \Firebase\Token\TokenGenerator::MAX_TOKEN_SIZE + 1),
+        ]);
+    }
+
+    public function testNoUIDWithAdmin()
+    {
+        $token = $this->generator->createToken(null, ['admin' => true]);
+
+        $data = $this->decodeToken($token);
+
+        $this->assertTrue($data->admin);
+    }
+
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage The uid must be a string, integer given.
+     */
+    public function testInvalidUIDWithAdmin1()
+    {
+        $this->generator->createToken(['uid' => 1], ['admin' => true]);
+    }
+
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage The uid must be a string, NULL given.
+     */
+    public function testInvalidUIDWithAdmin2()
+    {
+        $this->generator->createToken(['uid' => null], ['admin' => true]);
+    }
+
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage $data must be an array, an object or null.
+     */
+    public function testInvalidUIDWithAdmin3()
+    {
+        $this->generator->createToken('foo', ['admin' => true]);
+    }
+
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     * @expectedExceptionMessage No uid provided in data and admin option not set.
+     */
+    public function testEmptyDataAndNoOptionsThrowsException()
+    {
+        $this->generator->createToken(null);
+    }
+
+    /**
+     * @expectedException \Firebase\Token\TokenException
+     */
+    public function testMalformedDataThrowsException()
+    {
+        $this->generator->createToken(['uid' => 'uid', 'var' => "\xB1\x31"]);
+    }
+
+    public function testObjectIsTreatedAsArray()
+    {
+        $token = $this->generator->createToken((object) ['uid' => 'uid']);
+
+        $data = $this->decodeToken($token);
+
+        $this->assertEquals('uid', $data->d->uid);
+    }
+
+    /**
+     * Decodes a token.
+     *
+     * @param string $token
+     *
+     * @return object
+     */
+    protected function decodeToken($token)
+    {
+        return \JWT::decode($token, $this->secret, ['HS256']);
+    }
 }
-
-?>

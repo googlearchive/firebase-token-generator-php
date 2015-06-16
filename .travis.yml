@@ -1,0 +1,32 @@
+language: php
+
+sudo: false
+
+php:
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
+
+matrix:
+    fast_finish: true
+    allow_failures:
+        - php: 7.0
+
+cache:
+    directories:
+        - $HOME/.composer/cache
+
+before_install:
+    - travis_retry composer self-update
+
+install:
+    - travis_retry composer update --no-interaction
+
+before_script:
+    - if [ "$TRAVIS_PHP_VERSION" = "hhv*" ]; then cat tests/fixtures/travis.ini >> /etc/hhvm/php.ini; fi;
+    - if [ "$TRAVIS_PHP_VERSION" = "php*" ]; then phpenv config-add tests/fixtures/travis.ini ; fi;
+
+script:
+    - vendor/bin/phpunit --testdox --coverage-text
