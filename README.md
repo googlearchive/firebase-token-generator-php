@@ -80,7 +80,7 @@ Here is an example of how to set options:
 
 ```php
 use Firebase\Token\TokenGenerator;
-    
+
 $generator = new TokenGenerator('<YOUR_FIREBASE_SECRET>');
 
 // Using setOption()
@@ -90,7 +90,7 @@ $token = $generator
     ->setData(array('uid' => 'exampleID'))
     ->create();
 
-// Using setOptions() 
+// Using setOptions()
 $token = $generator
     ->setOptions(array(
         'admin' => true,
@@ -99,3 +99,21 @@ $token = $generator
     ->setData(array('uid' => 'exampleID'))
     ->create();
 ```
+
+
+## Changelog
+
+#### 2.1.0 - 2015-06-22
+- Update the minimum required PHP version to >= 5.4.
+- [Major package overhaul including API improvements](https://github.com/firebase/firebase-token-generator-php/pull/18)
+thanks to [@jeromegamez](https://github.com/jeromegamez)!
+
+#### 2.0.1 - 2015-04-02
+- Specifying the PHP-JWT version more specifically.
+
+#### 2.0.0 - 2014-09-15
+- Additional validation to ensure tokens contain a "uid" field unless they have
+the "admin" option set to `true`.
+
+#### 1.0.0 - 2014-09-04
+- Initial release
