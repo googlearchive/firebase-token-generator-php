@@ -103,6 +103,10 @@ $token = $generator
 
 ## Changelog
 
+#### 3.0.0 - ????-??-??
+- Update PHP-JWT to >= 3.0
+- Remove deprecated `Services_FirebaseTokenGenerator` and update tests
+
 #### 2.1.0 - 2015-06-22
 - Update the minimum required PHP version to >= 5.4.
 - [Major package overhaul including API improvements](https://github.com/firebase/firebase-token-generator-php/pull/18)
