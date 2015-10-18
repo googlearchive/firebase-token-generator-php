@@ -9,6 +9,8 @@
 
 namespace Firebase\Token;
 
+use Firebase\JWT\JWT;
+
 /**
  * Creates JWT token to to authenticate requests to a Firebase application.
  */
@@ -169,7 +171,7 @@ class TokenGenerator
         $claims['iat'] = time();
 
         try {
-            $token = \JWT::encode($claims, $this->secret, 'HS256');
+            $token = JWT::encode($claims, $this->secret, 'HS256');
         } catch (\Exception $e) {
             throw new TokenException($e->getMessage(), null, $e);
         }

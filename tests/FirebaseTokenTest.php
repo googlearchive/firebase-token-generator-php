@@ -9,6 +9,8 @@
 
 namespace Firebase\Token\Tests;
 
+use Firebase\JWT\JWT;
+
 /**
  * Tests for the Legacy \Services_FirebaseTokenGenerator class.
  */
@@ -207,6 +209,6 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     protected function decodeToken($token)
     {
-        return \JWT::decode($token, $this->secret, ['HS256']);
+        return JWT::decode($token, $this->secret, ['HS256']);
     }
 }
