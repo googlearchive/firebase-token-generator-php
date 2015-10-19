@@ -46,15 +46,26 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('integer', $data->iat);
     }
 
-    public function testAdminDebug()
+    public function testAdmin()
     {
         $token = $this->generator
-            ->setOptions(['admin' => true, 'debug' => true])
+            ->setOption('admin', true)
             ->create();
 
-        $data = $data = $this->decodeToken($token);
+        $data = $this->decodeToken($token);
 
         $this->assertTrue($data->admin);
+    }
+
+    public function testDebug()
+    {
+        $token = $this->generator
+            ->setData(['uid' => 'uid'])
+            ->setOption('debug', true)
+            ->create();
+
+        $data = $this->decodeToken($token);
+
         $this->assertTrue($data->debug);
     }
 
@@ -72,10 +83,11 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
         $expires = time() + 1000;
 
         $token = $this->generator
-            ->setOptions(['admin' => true, 'expires' => $expires])
+            ->setData(['uid' => 'uid'])
+            ->setOption('expires', $expires)
             ->create();
 
-        $data = $data = $this->decodeToken($token);
+        $data = $this->decodeToken($token);
 
         $this->assertEquals($expires, $data->exp);
     }
@@ -85,10 +97,11 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
         $notBefore = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
 
         $token = $this->generator
-            ->setOptions(['admin' => true, 'notBefore' => $notBefore])
+            ->setData(['uid' => 'uid'])
+            ->setOption('notBefore', $notBefore)
             ->create();
 
-        $data = $data = $this->decodeToken($token);
+        $data = $this->decodeToken($token);
 
         $this->assertEquals($notBefore->getTimestamp(), $data->nbf);
     }
@@ -111,7 +124,7 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
     public function testInvalidUID()
     {
         $this->generator
-            ->setData(['uid' => 5, 'blah' => 5])
+            ->setData(['uid' => 5])
             ->create();
     }
 
