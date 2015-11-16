@@ -118,7 +118,7 @@ class TokenGenerator
         if (!array_key_exists($name, $this->options)) {
             throw new TokenException(
                 sprintf(
-                    'Unsupported option "%s". Valid options are: ', $name, implode(', ', array_keys($this->options))
+                    'Unsupported option "%s". Valid options are: %s', $name, implode(', ', array_keys($this->options))
                 )
             );
         }
