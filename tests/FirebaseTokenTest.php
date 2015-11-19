@@ -9,13 +9,16 @@
 
 namespace Firebase\Token\Tests;
 
+use Firebase\JWT\JWT;
+use Firebase\Token\TokenGenerator;
+
 /**
  * Tests for the Legacy \Services_FirebaseTokenGenerator class.
  */
 class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Services_FirebaseTokenGenerator
+     * @var TokenGenerator
      */
     protected $generator;
 
@@ -27,12 +30,14 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->secret    = 'secret';
-        $this->generator = new \Services_FirebaseTokenGenerator($this->secret);
+        $this->generator = new TokenGenerator($this->secret);
     }
 
     public function testCreate()
     {
-        $token = $this->generator->createToken(['foo' => 'bar', 'baz' => 'boo', 'uid' => 'blah']);
+        $token = $this->generator
+            ->setData(['foo' => 'bar', 'baz' => 'boo', 'uid' => 'blah'])
+            ->create();
 
         $data = $this->decodeToken($token);
 
@@ -41,13 +46,26 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('integer', $data->iat);
     }
 
-    public function testAdminDebug()
+    public function testAdmin()
     {
-        $token = $this->generator->createToken(null, ['admin' => true, 'debug' => true]);
+        $token = $this->generator
+            ->setOption('admin', true)
+            ->create();
 
-        $data = $data = $this->decodeToken($token);
+        $data = $this->decodeToken($token);
 
         $this->assertTrue($data->admin);
+    }
+
+    public function testDebug()
+    {
+        $token = $this->generator
+            ->setData(['uid' => 'uid'])
+            ->setOption('debug', true)
+            ->create();
+
+        $data = $this->decodeToken($token);
+
         $this->assertTrue($data->debug);
     }
 
@@ -57,16 +75,19 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testMalformedKeyThrowsException()
     {
-        new \Services_FirebaseTokenGenerator(1234567890);
+        new TokenGenerator(1234567890);
     }
 
     public function testExpires()
     {
         $expires = time() + 1000;
 
-        $token = $this->generator->createToken(['uid' => 'blah'], ['expires' => $expires]);
+        $token = $this->generator
+            ->setData(['uid' => 'uid'])
+            ->setOption('expires', $expires)
+            ->create();
 
-        $data = $data = $this->decodeToken($token);
+        $data = $this->decodeToken($token);
 
         $this->assertEquals($expires, $data->exp);
     }
@@ -75,9 +96,12 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
     {
         $notBefore = new \DateTime('now', new \DateTimeZone('America/Los_Angeles'));
 
-        $token = $this->generator->createToken(['uid' => 'blah'], ['notBefore' => $notBefore]);
+        $token = $this->generator
+            ->setData(['uid' => 'uid'])
+            ->setOption('notBefore', $notBefore)
+            ->create();
 
-        $data = $data = $this->decodeToken($token);
+        $data = $this->decodeToken($token);
 
         $this->assertEquals($notBefore->getTimestamp(), $data->nbf);
     }
@@ -88,7 +112,9 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoUID()
     {
-        $this->generator->createToken(['blah' => 5]);
+        $this->generator
+            ->setData(['blah' => 5])
+            ->create();
     }
 
     /**
@@ -97,7 +123,9 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidUID()
     {
-        $this->generator->createToken(['uid' => 5, 'blah' => 5]);
+        $this->generator
+            ->setData(['uid' => 5])
+            ->create();
     }
 
     public function testUIDTooLong()
@@ -106,11 +134,13 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
             '\Firebase\Token\TokenException',
             sprintf(
                 'The provided uid is longer than %d bytes (%d)',
-                \Firebase\Token\TokenGenerator::MAX_UID_SIZE, \Firebase\Token\TokenGenerator::MAX_UID_SIZE + 1
+                TokenGenerator::MAX_UID_SIZE, TokenGenerator::MAX_UID_SIZE + 1
             )
         );
 
-        $this->generator->createToken(['uid' => str_repeat('x', \Firebase\Token\TokenGenerator::MAX_UID_SIZE + 1)]);
+        $this->generator
+            ->setData(['uid' => str_repeat('x', TokenGenerator::MAX_UID_SIZE + 1)])
+            ->create();
     }
 
     /**
@@ -119,26 +149,32 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testUIDMinLength()
     {
-        $this->generator->createToken(['uid' => '']);
+        $this->generator
+            ->setData(['uid' => ''])
+            ->create();
     }
 
     public function testTokenTooLong()
     {
         $expectedMessagePattern = sprintf(
-            '/^The generated token is larger than %d bytes \(\d+\)$/', \Firebase\Token\TokenGenerator::MAX_TOKEN_SIZE
+            '/^The generated token is larger than %d bytes \(\d+\)$/', TokenGenerator::MAX_TOKEN_SIZE
         );
 
         $this->setExpectedExceptionRegExp('\Exception', $expectedMessagePattern);
 
-        $this->generator->createToken([
-            'uid'     => 'uid',
-            'longVar' => str_repeat('x', \Firebase\Token\TokenGenerator::MAX_TOKEN_SIZE + 1),
-        ]);
+        $this->generator
+            ->setData([
+                'uid'     => 'uid',
+                'longVar' => str_repeat('x', TokenGenerator::MAX_TOKEN_SIZE + 1),
+            ])
+            ->create();
     }
 
     public function testNoUIDWithAdmin()
     {
-        $token = $this->generator->createToken(null, ['admin' => true]);
+        $token = $this->generator
+            ->setOption('admin', true)
+            ->create();
 
         $data = $this->decodeToken($token);
 
@@ -151,7 +187,10 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidUIDWithAdmin1()
     {
-        $this->generator->createToken(['uid' => 1], ['admin' => true]);
+        $this->generator
+            ->setData(['uid' => 1])
+            ->setOption('admin', true)
+            ->create();
     }
 
     /**
@@ -160,16 +199,10 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidUIDWithAdmin2()
     {
-        $this->generator->createToken(['uid' => null], ['admin' => true]);
-    }
-
-    /**
-     * @expectedException \Firebase\Token\TokenException
-     * @expectedExceptionMessage $data must be an array, an object or null.
-     */
-    public function testInvalidUIDWithAdmin3()
-    {
-        $this->generator->createToken('foo', ['admin' => true]);
+        $this->generator
+            ->setData(['uid' => null])
+            ->setOption('admin', true)
+            ->create();
     }
 
     /**
@@ -178,7 +211,7 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyDataAndNoOptionsThrowsException()
     {
-        $this->generator->createToken(null);
+        $this->generator->create();
     }
 
     /**
@@ -186,16 +219,9 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     public function testMalformedDataThrowsException()
     {
-        $this->generator->createToken(['uid' => 'uid', 'var' => "\xB1\x31"]);
-    }
-
-    public function testObjectIsTreatedAsArray()
-    {
-        $token = $this->generator->createToken((object) ['uid' => 'uid']);
-
-        $data = $this->decodeToken($token);
-
-        $this->assertEquals('uid', $data->d->uid);
+        $this->generator
+            ->setData(['uid' => 'uid', 'var' => "\xB1\x31"])
+            ->create();
     }
 
     /**
@@ -207,6 +233,6 @@ class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
      */
     protected function decodeToken($token)
     {
-        return \JWT::decode($token, $this->secret, ['HS256']);
+        return JWT::decode($token, $this->secret, ['HS256']);
     }
 }
