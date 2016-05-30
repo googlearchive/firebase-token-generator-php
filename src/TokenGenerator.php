@@ -58,7 +58,6 @@ class TokenGenerator
 
         $this->secret = $secret;
         $this->data   = [];
-c
         // Default options
         $this->options = [
             'admin'     => false,
