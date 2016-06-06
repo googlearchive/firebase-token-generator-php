@@ -1,5 +1,7 @@
 # Firebase Token Generator - PHP
 
+**WARNING: This token generator is compatible with versions 1.x.x and 2.x.x of the Firebase SDK. If you are using the 3.x.x SDK, please refer to the documentation [here](https://firebase.google.com/docs/auth/server#use_a_jwt_library).**
+
 [Firebase Custom Login](https://www.firebase.com/docs/web/guide/simple-login/custom.html)
 gives you complete control over user authentication by allowing you to authenticate users
 with secure JSON Web Tokens (JWTs). The auth payload stored in those tokens is available
