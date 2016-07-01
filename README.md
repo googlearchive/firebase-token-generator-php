@@ -1,7 +1,5 @@
 # Firebase Token Generator - PHP
 
-**WARNING: This token generator is compatible with versions 1.x.x and 2.x.x of the Firebase SDK. If you are using the 3.x.x SDK, please refer to the documentation [here](https://firebase.google.com/docs/auth/server#use_a_jwt_library).**
-
 [Firebase Custom Login](https://www.firebase.com/docs/web/guide/simple-login/custom.html)
 gives you complete control over user authentication by allowing you to authenticate users
 with secure JSON Web Tokens (JWTs). The auth payload stored in those tokens is available
@@ -29,6 +27,40 @@ composer require firebase/token-generator
 ```
 
 ## Generating Tokens
+
+- [Version 3.x of the Firebase SDK](#version-3x-of-the-firebase-sdk)
+- [Versions 1.x and 2.x of the Firebase SDK](#versions-1x-and-2x-of-the-firebase-sdk)
+  - [Token Options](#token-options)
+
+### Version 3.x of the Firebase SDK
+
+To create custom tokens with the Firebase server SDKs, you must have a service account. 
+Follow the [server SDK setup instructions](https://firebase.google.com/docs/server/setup/)
+for more information on how to initialize your server SDK with a service account.
+
+Once you have downloaded the service account's key file, you can generate a custom token with
+this snippet of PHP code:
+
+```php
+use Firebase\Token\V3\ServiceAccount;
+use Firebase\Token\V3\TokenGenerator;
+
+try {
+    $serviceAccount = ServiceAccount::fromKeyFile('/path/to/key_file.json');
+    // The $enableDebug parameter is optional and defaults to false
+    $generator = new TokenGenerator($serviceAccount, $enableDebug = true);
+    
+    // The $claims parameter is option and defaults to an empty array
+    $token = $generator->createCustomToken('custom_uid', $claims = ['foo' => 'bar']);
+    
+    echo $token;
+} catch (\Exception $e) {
+    echo 'Error: '.$e->getMessage();
+    exit;
+}
+```
+
+### Versions 1.x and 2.x of the Firebase SDK
 
 To generate tokens, you'll need your Firebase Secret which you can find by entering your Firebase
 URL into a browser and clicking the "Secrets" tab on the left-hand navigation menu.
@@ -61,7 +93,7 @@ than 256 characters. The generated token must be less than 1024 characters in
 total.
 
 
-## Token Options
+#### Token Options
 
 Token options can be set to modify how Firebase treats the token. Available options are:
 
@@ -101,7 +133,6 @@ $token = $generator
     ->setData(array('uid' => 'exampleID'))
     ->create();
 ```
-
 
 ## Changelog
 
