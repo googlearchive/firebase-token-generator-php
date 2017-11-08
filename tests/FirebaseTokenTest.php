@@ -11,11 +11,12 @@ namespace Firebase\Token\Tests;
 
 use Firebase\JWT\JWT;
 use Firebase\Token\TokenGenerator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Legacy \Services_FirebaseTokenGenerator class.
  */
-class FirebaseTokenTest extends \PHPUnit_Framework_TestCase
+class FirebaseTokenTest extends TestCase
 {
     /**
      * @var TokenGenerator
