@@ -11,8 +11,9 @@ namespace Firebase\Token\Tests;
 
 use Firebase\JWT\JWT;
 use Firebase\Token\TokenGenerator;
+use PHPUnit\Framework\TestCase;
 
-class TokenGeneratorTest extends \PHPUnit_Framework_TestCase
+class TokenGeneratorTest extends TestCase
 {
     /**
      * @var \Firebase\Token\TokenGenerator
