@@ -20,6 +20,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.4",
+        "ext-mbstring": "*",
         "firebase/php-jwt": "^3.0"
     },
     "require-dev": {
