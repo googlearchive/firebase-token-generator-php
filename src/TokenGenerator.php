@@ -58,13 +58,16 @@ class TokenGenerator
 
         $this->secret = $secret;
         $this->data   = [];
-
         // Default options
         $this->options = [
             'admin'     => false,
             'debug'     => false,
             'expires'   => null,
             'notBefore' => null,
+			'aud' => null,
+			'iss' => null,
+			'sub' => null,
+			'uid' => null,
         ];
     }
 
@@ -166,7 +169,7 @@ class TokenGenerator
         $this->validate();
 
         $claims        = $this->processOptions();
-        $claims['d']   = $this->data;
+        $claims['claims']   = $this->data;
         $claims['v']   = 0;
         $claims['iat'] = time();
 

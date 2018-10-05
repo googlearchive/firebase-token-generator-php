@@ -46,9 +46,14 @@ use Firebase\Token\TokenException;
 use Firebase\Token\TokenGenerator;
 
 try {
-    $generator = new TokenGenerator('<YOUR_FIREBASE_SECRET>');
+    $service_account_email = <YOUR_FIREBASE_SERVICE_ACCOUNT_EMAIL>;
+    $generator = new TokenGenerator('<YOUR_FIREBASE_PRIVATE_KEY>');
     $token = $generator
         ->setData(array('uid' => 'exampleID'))
+        ->setOption('aud', "https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit")
+		->setOption('iss', $service_account_email)
+		->setOption('sub', $service_account_email)
+		->setOption('uid', 'exampleID')
         ->create();
 } catch (TokenException $e) {
     echo "Error: ".$e->getMessage();
